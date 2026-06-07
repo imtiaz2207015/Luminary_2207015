@@ -28,19 +28,28 @@ class AdminCapsuleController extends Controller {
     }
 
     public function reject(Request $request, Capsule $capsule) {
-        $request->validate(['reason' => 'required|string']);
-        $capsule->update(['status' => 'rejected', 'reject_reason' => $request->reason]);
-        Notification::create([
-            'user_id' => $capsule->user_id,
-            'type' => 'capsule_rejected',
-            'data' => json_encode([
-                'capsule_id' => $capsule->id,
-                'capsule_title' => $capsule->title,
-                'reason' => $request->reason,
-            ]),
-        ]);
-        return back()->with('success', 'Capsule rejected.');
-    }
+    $request->validate([
+        'reason' => 'required|string|min:10|max:500',
+    ]);
+
+    $cleanReason = strip_tags($request->reason);
+
+    $capsule->update([
+        'status' => 'rejected',
+        'reject_reason' => $cleanReason,
+    ]);
+
+    Notification::create([
+        'user_id' => $capsule->user_id,
+        'type' => 'capsule_rejected',
+        'data' => json_encode([
+            'capsule_id' => $capsule->id,
+            'capsule_title' => $capsule->title,
+            'reason' => $cleanReason,
+        ]),
+    ]);
+    return back()->with('success', 'Capsule rejected.');
+}
 
     public function destroy(Capsule $capsule) {
         $capsule->delete();

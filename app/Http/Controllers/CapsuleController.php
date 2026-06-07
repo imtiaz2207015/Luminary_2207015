@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use App\Models\User;
 
 class CapsuleController extends Controller {
     public function index() {
@@ -24,7 +25,7 @@ class CapsuleController extends Controller {
         $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
-            'unlock_date' => 'required|date|after:today',
+            'unlock_date' => ['required', 'date', 'date_format:Y-m-d', 'after:today'],
             'visibility' => 'required|in:only_me,friends,public',
             'lock_type' => 'required|in:locked,draft',
         ]);
@@ -91,13 +92,13 @@ class CapsuleController extends Controller {
 
     public function edit(Capsule $capsule) {
         abort_if($capsule->user_id !== Auth::id(), 403);
-        abort_if($capsule->status === 'locked', 403);
+        abort_if($capsule->is_locked, 403);
         return view('capsules.edit', compact('capsule'));
     }
 
     public function update(Request $request, Capsule $capsule) {
         abort_if($capsule->user_id !== Auth::id(), 403);
-        abort_if($capsule->status === 'locked', 403);
+        abort_if($capsule->is_locked, 403);
         $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
