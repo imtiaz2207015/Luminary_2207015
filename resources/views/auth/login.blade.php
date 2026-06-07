@@ -30,5 +30,5 @@
 <div class="text-center mb-3" style="color:#8b95a8; font-size:0.85rem;">
     Don't have an account? <a href="{{ route('register') }}" class="auth-link">Create one</a>
 </div>
-<a href="{{ route('admin.login') }}" class="admin-btn">🔐 Admin Login</a>
+<a href="{{ route('admin.login') }}" class="admin-btn">Admin Login</a>
 @endsection
