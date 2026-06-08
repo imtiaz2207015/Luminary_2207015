@@ -72,7 +72,7 @@ class CapsuleController extends Controller {
                     Notification::create([
                         'user_id' => $invitedUser->id,
                         'type' => 'group_invite',
-                        'data' => json_encode(['capsule_id' => $capsule->id, 'capsule_title' => $capsule->title]),
+                        'data' => ['capsule_id' => $capsule->id, 'capsule_title' => $capsule->title],
                     ]);
                 }
             }
@@ -102,7 +102,7 @@ class CapsuleController extends Controller {
         $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
-            'unlock_date' => 'required|date|after:today',
+            'unlock_date' => ['required', 'date', 'date_format:Y-m-d', 'after:today'],
             'visibility' => 'required|in:only_me,friends,public',
         ]);
         $capsule->update($request->only('title','content','unlock_date','visibility'));

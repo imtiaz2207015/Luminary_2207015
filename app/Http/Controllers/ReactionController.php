@@ -8,6 +8,21 @@ use Illuminate\Support\Facades\Auth;
 
 class ReactionController extends Controller {
     public function toggle(Request $request, Capsule $capsule) {
+        // Authorization: User can only react to unlocked capsules they can view
+        abort_if($capsule->is_locked, 403);
+        
+        // Check visibility permissions
+        if ($capsule->visibility === 'only_me' && $capsule->user_id !== Auth::id()) {
+            abort(403);
+        }
+        if ($capsule->visibility === 'friends') {
+            $isFriend = Auth::user()->friendships()
+                ->where('friend_id', $capsule->user_id)
+                ->where('status', 'accepted')
+                ->exists();
+            abort_if(!$isFriend && $capsule->user_id !== Auth::id(), 403);
+        }
+
         $request->validate(['type' => 'required|in:inspired,goals,proud']);
         $existing = Reaction::where('user_id', Auth::id())
             ->where('capsule_id', $capsule->id)->first();

@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 use App\Models\Friendship;
 use App\Models\User;
 use App\Models\Notification;
+use App\Models\Capsule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
 
 class FriendController extends Controller {
    public function index() {
@@ -56,7 +58,7 @@ class FriendController extends Controller {
         Notification::create([
             'user_id' => $user->id,
             'type' => 'friend_request',
-            'data' => json_encode(['from_user_id' => Auth::id(), 'from_user_name' => Auth::user()->name]),
+            'data' => ['from_user_id' => Auth::id(), 'from_user_name' => Auth::user()->name],
         ]);
     }
     return back()->with('success', 'Friend request sent!');
