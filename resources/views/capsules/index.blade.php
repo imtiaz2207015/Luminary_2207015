@@ -23,22 +23,24 @@
     <div class="row g-3">
         @foreach($capsules as $capsule)
         <div class="col-md-6 col-lg-4">
-            <div class="glass-card capsule-card h-100">
-                <div class="capsule-card-header d-flex justify-content-between align-items-start"
+            <div class="glass-card capsule-card h-100 d-flex flex-column">
+                <div class="capsule-card-header d-flex justify-content-between align-items-center"
                      style="background: rgba(201,168,76,0.04);">
-                    <div class="d-flex gap-2 flex-wrap">
+                    <div class="d-flex gap-2 flex-wrap align-items-center">
                         <span class="badge-gold">{{ ucfirst($capsule->visibility) }}</span>
                         @if($capsule->is_group) <span class="badge-teal">Group</span> @endif
                     </div>
-                    @if($capsule->is_locked)
-                        <span class="badge-locked">🔒</span>
-                    @elseif($capsule->status === 'pending_review')
-                        <span class="badge-pending">⏳ Review</span>
-                    @elseif($capsule->status === 'approved')
-                        <span class="badge-unlocked">✅ Live</span>
-                    @else
-                        <span class="badge-unlocked">🔓</span>
-                    @endif
+                    <div>
+                        @if($capsule->is_locked)
+                            <span class="badge-locked">🔒</span>
+                        @elseif($capsule->status === 'pending_review')
+                            <span class="badge-pending">⏳ Review</span>
+                        @elseif($capsule->status === 'approved')
+                            <span class="badge-unlocked">✅ Live</span>
+                        @else
+                            <span class="badge-unlocked">🔓</span>
+                        @endif
+                    </div>
                 </div>
                 <div class="capsule-card-body" style="flex:1;">
                     <h6 style="color:#f5f0e8; font-weight:600; margin-bottom:0.4rem;">{{ $capsule->title }}</h6>

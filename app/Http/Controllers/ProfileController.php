@@ -8,9 +8,24 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use App\Models\User;
+use App\Models\Capsule;
 
 class ProfileController extends Controller
 {
+    public function show(User $user)
+{
+    $capsules = Capsule::where('user_id', $user->id)
+        ->where('visibility', 'friends')
+        ->where('is_locked', false)
+        ->where('status', 'approved')
+        ->with('reactions')
+        ->latest()
+        ->get();
+
+    return view('profile.show', compact('user', 'capsules'));
+}
+
     /**
      * Display the user's profile form.
      */
@@ -61,4 +76,7 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+    
 }
+
+

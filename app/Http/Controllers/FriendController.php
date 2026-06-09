@@ -21,16 +21,7 @@ class FriendController extends Controller {
         ->with('user')
         ->get();
 
-    $friendIds = $friends->pluck('friend_id');
-
-    $friendCapsules = Capsule::whereIn('user_id', $friendIds)
-        ->where('visibility', 'friends')
-        ->where('is_locked', false)
-        ->with('user', 'reactions')
-        ->latest()
-        ->get();
-
-    return view('friends', compact('friends', 'pendingRequests', 'friendCapsules'));
+   return view('friends.index', compact('friends', 'pendingRequests'));
 }
 
     public function search(Request $request) {
@@ -39,7 +30,7 @@ class FriendController extends Controller {
             ->where('name', 'like', "%{$query}%")
             ->orWhere('email', 'like', "%{$query}%")
             ->take(10)->get();
-        return view('friends', compact('users', 'query'));
+        return view('friends.index', compact('users', 'query'));
     }
 
    public function sendRequest(User $user) {
@@ -85,4 +76,18 @@ class FriendController extends Controller {
         Friendship::where('user_id', $user->id)->where('friend_id', Auth::id())->delete();
         return back()->with('success', 'Unfriended.');
     }
+   public function showCapsules($friendId)
+{
+    $friend = User::findOrFail($friendId);
+
+    $capsules = Capsule::where('user_id', $friendId)
+        ->where('visibility', 'friends')
+        ->where('is_locked', false)
+        ->with('reactions')
+        ->latest()
+        ->paginate(5);
+
+    return view('friends.profile', compact('friend', 'capsules'));
 }
+}
+

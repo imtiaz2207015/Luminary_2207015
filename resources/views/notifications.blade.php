@@ -16,40 +16,74 @@
         <p style="color:#8b95a8;">No notifications yet.</p>
     </div>
 @else
-    @foreach($notifications as $notif)
-    @php $data = json_decode($notif->data, true) ?? []; @endphp
-    <div class="glass-card p-3 mb-2 d-flex align-items-start gap-3"
-         style="{{ $notif->read_at ? '' : 'border-color:rgba(201,168,76,0.3);' }}">
-        <div style="font-size:1.5rem; margin-top:2px;">
-            @if($notif->type === 'capsule_approved') ✅
-            @elseif($notif->type === 'capsule_rejected') ❌
-            @elseif($notif->type === 'friend_request') 👋
-            @elseif($notif->type === 'group_invite') 👥
-            @else 🔔
-            @endif
+  @foreach($notifications as $notif)
+@php
+    $data = is_array($notif->data) ? $notif->data : (json_decode($notif->data, true) ?? []);
+
+    // Build icon
+    $icon = match($notif->type) {
+        'reaction'          => '🔔',
+        'comment'           => '💬',
+        'capsule_approved'  => '✅',
+        'capsule_rejected'  => '❌',
+        'friend_request'    => '👋',
+        'group_invite'      => '👥',
+        default             => '🔔',
+    };
+
+    // Build the capsule link (only for reaction/comment)
+    $capsuleLink = (isset($data['capsule_id']) && isset($data['capsule_title']))
+        ? '<a href="' . route('capsules.show', $data['capsule_id']) . '"
+              style="color:#c9a84c; font-weight:600; text-decoration:none;"
+              onmouseover="this.style.textDecoration=\'underline\'"
+              onmouseout="this.style.textDecoration=\'none\'">'
+          . e($data['capsule_title']) . '</a>'
+        : null;
+
+    // Build the message text
+    $message = match($notif->type) {
+        'reaction' => ($data['actor_name'] ?? 'Someone')
+            . ' reacted ✨ <span style="color:#4ecdc4; font-weight:600;">'
+            . ucfirst($data['reaction_type'] ?? '') . '</span>'
+            . ' to your capsule &rarr; ' . $capsuleLink,
+
+        'comment' => ($data['actor_name'] ?? 'Someone')
+            . ' commented on your capsule &rarr; ' . $capsuleLink,
+
+        'capsule_approved' => 'Your capsule has been <span style="color:#4ecdc4; font-weight:600;">approved</span> by the admin.',
+        'capsule_rejected' => 'Your capsule was <span style="color:#e74c3c; font-weight:600;">rejected</span> by the admin.',
+        'friend_request'   => ($data['actor_name'] ?? 'Someone') . ' sent you a friend request.',
+        'group_invite'     => 'You have been invited to join a group.',
+        default            => $data['message'] ?? 'You have a new notification.',
+    };
+@endphp
+
+<div class="glass-card p-3 mb-2 d-flex align-items-start gap-3"
+     style="{{ $notif->read_at ? '' : 'border-color:rgba(201,168,76,0.3);' }}">
+
+    {{-- Icon --}}
+    <div style="font-size:1.5rem; margin-top:2px;">{{ $icon }}</div>
+
+    {{-- Message + timestamp --}}
+    <div style="flex:1;">
+        <div style="color:#f5f0e8; font-size:0.9rem; font-weight:{{ $notif->read_at ? '400' : '600' }};">
+            {!! $message !!}
         </div>
-        <div style="flex:1;">
-            <div style="color:#f5f0e8; font-size:0.9rem; font-weight:{{ $notif->read_at ? '400' : '600' }};">
-                @if($notif->type === 'capsule_approved')
-                    Your capsule <strong>"{{ $data['capsule_title'] ?? '' }}"</strong> was approved and is now live!
-                @elseif($notif->type === 'capsule_rejected')
-                    Your capsule <strong>"{{ $data['capsule_title'] ?? '' }}"</strong> was rejected.
-                    @if(!empty($data['reason'])) <span style="color:#8b95a8; font-size:0.82rem;">Reason: {{ $data['reason'] }}</span> @endif
-                @elseif($notif->type === 'friend_request')
-                    <strong>{{ $data['from_user_name'] ?? 'Someone' }}</strong> sent you a friend request.
-                @elseif($notif->type === 'group_invite')
-                    You were invited to a group capsule: <strong>"{{ $data['capsule_title'] ?? '' }}"</strong>
-                @else
-                    {{ $notif->data }}
-                @endif
-            </div>
-            <div style="color:#8b95a8; font-size:0.75rem; margin-top:4px;">{{ $notif->created_at->diffForHumans() }}</div>
+        <div style="color:#8b95a8; font-size:0.75rem; margin-top:4px;">
+            {{ $notif->created_at->diffForHumans() }}
         </div>
-        @if(!$notif->read_at)
-            <div class="notif-dot mt-2"></div>
-        @endif
     </div>
-    @endforeach
+
+    {{-- Mark as read --}}
+    @if(!$notif->read_at)
+        <form method="POST" action="{{ route('notifications.read', $notif->id) }}" class="ms-auto">
+            @csrf
+            <button type="submit" class="btn btn-sm btn-gold">Mark as Read</button>
+        </form>
+    @endif
+</div>
+@endforeach
+
     <div class="mt-3">{{ $notifications->links() }}</div>
 @endif
 @endsection

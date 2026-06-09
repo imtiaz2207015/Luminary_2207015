@@ -71,7 +71,7 @@
 
     {{-- Friends List --}}
     @if(isset($friends))
-    <div class="col-md-4">
+    <div class="col-md-12">
         <h5 style="font-family:'Playfair Display',serif; color:#f5f0e8; margin-bottom:1rem;">
             My Friends @if($friends->count() > 0) <span class="badge-gold ms-2">{{ $friends->count() }}</span> @endif
         </h5>
@@ -79,9 +79,13 @@
         <div class="glass-card p-3 d-flex align-items-center gap-3 mb-2">
             <img src="{{ $friendship->friend->avatar_url }}" style="width:40px; height:40px; border-radius:50%;" alt="">
             <div style="flex:1;">
-                <div style="color:#f5f0e8; font-weight:600; font-size:0.9rem;">{{ $friendship->friend->name }}</div>
+            <a href="{{route('friends.capsules', $friendship->friend->id)}}" 
+   style="color:#f5f0e8; font-weight:600; font-size:0.9rem; text-decoration:none;">
+    {{ $friendship->friend->name }}
+</a>
+
             </div>
-            <form method="POST" action="{{ route('friends.unfriend', $friendship->friend) }}">
+            <form method="POST" action="{{ route('friends.unfriend', $friendship->friend->id)}}">
                 @csrf @method('DELETE')
                 <button class="btn btn-danger-soft btn-sm">Unfriend</button>
             </form>
@@ -89,39 +93,6 @@
         @empty
         <div class="glass-card p-4 text-center">
             <p style="color:#8b95a8; font-size:0.85rem; margin:0;">No friends yet. Search above!</p>
-        </div>
-        @endforelse
-    </div>
-
-    {{-- Friends Capsules --}}
-    <div class="col-md-8">
-        <h5 style="font-family:'Playfair Display',serif; color:#f5f0e8; margin-bottom:1rem;">Friends' Capsules</h5>
-        @forelse($friendCapsules as $capsule)
-        <div class="glass-card p-4 mb-3">
-            <div class="d-flex align-items-center gap-3 mb-3">
-                <img src="{{ $capsule->user->avatar_url }}" style="width:36px; height:36px; border-radius:50%;" alt="">
-                <div>
-                    <div style="color:#f5f0e8; font-weight:600; font-size:0.88rem;">{{ $capsule->user->name }}</div>
-                    <div style="color:#8b95a8; font-size:0.75rem;">{{ $capsule->unlock_date->format('d M Y') }}</div>
-                </div>
-            </div>
-            <h6 style="color:#f5f0e8;">{{ $capsule->title }}</h6>
-            <p style="color:#c8c0b8; font-size:0.85rem;">{{ Str::limit($capsule->content, 200) }}</p>
-            <div class="d-flex gap-2">
-                @foreach(['inspired' => '❤️', 'goals' => '🔥', 'proud' => '🙌'] as $type => $emoji)
-                <form method="POST" action="{{ route('reactions.toggle', $capsule) }}" class="d-inline">
-                    @csrf
-                    <input type="hidden" name="type" value="{{ $type }}">
-                    <button type="submit" class="btn btn-sm" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#f5f0e8; border-radius:20px; padding:3px 10px; font-size:0.78rem;">
-                        {{ $emoji }} {{ $capsule->reactionCount($type) }}
-                    </button>
-                </form>
-                @endforeach
-            </div>
-        </div>
-        @empty
-        <div class="glass-card p-4 text-center">
-            <p style="color:#8b95a8; font-size:0.85rem; margin:0;">No unlocked capsules from friends yet.</p>
         </div>
         @endforelse
     </div>

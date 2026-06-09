@@ -22,7 +22,7 @@ class AdminCapsuleController extends Controller {
         Notification::create([
             'user_id' => $capsule->user_id,
             'type' => 'capsule_approved',
-            'data' => json_encode(['capsule_id' => $capsule->id, 'capsule_title' => $capsule->title]),
+            'data' => ['capsule_id' => $capsule->id, 'capsule_title' => $capsule->title],
         ]);
         return back()->with('success', 'Capsule approved!');
     }

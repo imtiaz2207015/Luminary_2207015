@@ -41,3 +41,4 @@ class Capsule extends Model {
         return $this->reactions()->where('user_id', $userId)->first();
     }
 }
+

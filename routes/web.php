@@ -39,6 +39,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/friends/{friendship}/accept', [FriendController::class, 'acceptRequest'])->name('friends.accept');
     Route::post('/friends/{friendship}/decline', [FriendController::class, 'declineRequest'])->name('friends.decline');
     Route::delete('/friends/{user}/unfriend', [FriendController::class, 'unfriend'])->name('friends.unfriend');
+   Route::get('/friends/{friendId}/capsules', [FriendController::class, 'showCapsules'])
+    ->name('friends.capsules');
 
     // Reactions
     Route::post('/capsules/{capsule}/react', [ReactionController::class, 'toggle'])->name('reactions.toggle');
@@ -49,12 +51,18 @@ Route::middleware('auth')->group(function () {
 
     // Notifications
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+
 
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+// User logout
+Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
+
 
 // Admin auth
 Route::get('/admin/login', [AdminController::class, 'showLogin'])->name('admin.login');
@@ -75,3 +83,4 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+

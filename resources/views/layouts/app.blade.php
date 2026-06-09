@@ -164,20 +164,39 @@
         </a>
     </nav>
     <div class="sidebar-footer">
-        <div class="user-card">
+    <div class="dropdown">
+        <!-- User card acts as dropdown toggle -->
+        <button class="user-card btn d-flex align-items-center w-100" 
+                id="userMenuDropdown" 
+                data-bs-toggle="dropdown" 
+                aria-expanded="false">
             <img src="{{ Auth::user()->avatar_url }}" class="user-avatar" alt="avatar">
-            <div>
+            <div class="ms-2 text-start flex-grow-1">
                 <div class="user-name">{{ Auth::user()->name }}</div>
                 <div class="user-role">Member</div>
             </div>
-            <form method="POST" action="{{ route('logout') }}" class="ms-auto">
-                @csrf
-                <button type="submit" class="btn p-0 text-muted" title="Logout">
-                    <i class="bi bi-box-arrow-right"></i>
-                </button>
-            </form>
-        </div>
+            <i class="bi bi-chevron-up ms-auto"></i>
+        </button>
+
+        <!-- Dropdown menu -->
+        <ul class="dropdown-menu dropdown-menu-dark w-100" aria-labelledby="userMenuDropdown">
+            <li>
+                <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                    <i class="bi bi-person me-2"></i> Profile
+                </a>
+            </li>
+            <li>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="dropdown-item text-danger">
+                        <i class="bi bi-box-arrow-right me-2"></i> Logout
+                    </button>
+                </form>
+            </li>
+        </ul>
     </div>
+</div>
+
 </div>
 
 <div class="main-content">

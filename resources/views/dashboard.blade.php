@@ -80,7 +80,7 @@
     <div class="row g-3 mb-3">
         @foreach($recentCapsules->take(3) as $capsule)
         <div class="col-md-4">
-            <div class="glass-card capsule-card h-100">
+            <div class="glass-card capsule-card h-100 d-flex flex-column">
                 <div class="capsule-card-header d-flex justify-content-between align-items-center flex-wrap gap-1">
                     <div class="d-flex gap-2 align-items-center">
                         <span class="badge-gold">{{ ucfirst($capsule->visibility) }}</span>
@@ -98,7 +98,7 @@
                         @endif
                     </div>
                 </div>
-                <div class="capsule-card-body">
+                <div class="capsule-card-body" style="flex:1;">
                     <h6 style="color:#f5f0e8; font-weight:600; margin-bottom:0.4rem;">{{ $capsule->title }}</h6>
                     <p style="color:#8b95a8; font-size:0.82rem; margin-bottom:0.6rem;">
                         <i class="bi bi-calendar3 me-1"></i> {{ $capsule->unlock_date->format('d M Y') }}

@@ -1,10 +1,12 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\Notification;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Capsule;
 use App\Models\Reaction;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+
 
 class ReactionController extends Controller {
     public function toggle(Request $request, Capsule $capsule) {
@@ -35,13 +37,27 @@ class ReactionController extends Controller {
                 $action = 'updated';
             }
         } else {
-            Reaction::create([
-                'user_id' => Auth::id(),
-                'capsule_id' => $capsule->id,
-                'type' => $request->type,
-            ]);
-            $action = 'added';
-        }
+    Reaction::create([
+        'user_id'    => Auth::id(),
+        'capsule_id' => $capsule->id,
+        'type'       => $request->type,
+    ]);
+    $action = 'added';
+
+    // Notify capsule owner (skip if reacting to own capsule)
+    if ($capsule->user_id !== Auth::id()) {
+        Notification::create([
+            'user_id' => $capsule->user_id,
+            'type'    => 'reaction',
+            'data'    => json_encode([
+                'actor_name'   => Auth::user()->name,
+                'reaction_type'=> $request->type,
+                'capsule_id'   => $capsule->id,
+                'capsule_title'=> $capsule->title,
+            ]),
+        ]);
+    }
+}
         return back()->with('success', 'Reaction ' . $action . '!');
     }
 }
