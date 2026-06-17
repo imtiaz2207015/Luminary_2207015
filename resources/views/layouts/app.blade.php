@@ -136,7 +136,7 @@
 <body>
 <div class="sidebar" id="sidebar">
     <div class="sidebar-brand">
-        <h2>✨ Luminary</h2>
+        <h2> Luminary</h2>
         <p>Your time capsule platform</p>
     </div>
     <nav class="sidebar-nav">
