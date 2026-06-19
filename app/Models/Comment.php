@@ -1,10 +1,26 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Comment extends Model {
-    protected $fillable = ['user_id', 'capsule_id', 'body'];
-    public function user() { return $this->belongsTo(User::class); }
-    public function capsule() { return $this->belongsTo(Capsule::class); }
+class Comment extends Model
+{
+    protected $fillable = ['user_id', 'capsule_id', 'post_id', 'body'];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function capsule(): BelongsTo
+    {
+        return $this->belongsTo(Capsule::class);
+    }
+
+    public function post(): BelongsTo
+    {
+        return $this->belongsTo(Post::class);
+    }
 }

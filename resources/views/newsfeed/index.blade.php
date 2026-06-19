@@ -111,6 +111,12 @@
     margin: 14px 0 12px;
 }
 
+.btn-gold:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    filter: grayscale(0.4);
+}
+
 /* ── Post card ── */
 .post-card {
     background: rgba(255,255,255,0.03);
@@ -158,6 +164,59 @@
 .post-capsule-wrap {
     padding: 14px 18px 0;
 }
+.post-menu-wrap { position: relative; }
+.post-menu-btn {
+    background: transparent;
+    border: none;
+    color: #8b95a8;
+    font-size: 1.1rem;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.18s;
+}
+.post-menu-btn:hover { background: rgba(255,255,255,0.08); color: #f5f0e8; }
+.post-menu-dropdown {
+    display: none;
+    position: absolute;
+    top: 36px; right: 0;
+    background: #11151f;
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 12px;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.5);
+    min-width: 170px;
+    padding: 6px;
+    z-index: 20;
+}
+.post-menu-dropdown.open { display: block; }
+.post-menu-label {
+    color: #8b95a8;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 6px 10px 2px;
+}
+.post-menu-form { margin: 0; }
+.post-menu-item {
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: none;
+    color: #c8c0b8;
+    font-size: 0.85rem;
+    padding: 8px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.post-menu-item:hover { background: rgba(255,255,255,0.06); }
+.post-menu-item.active { color: #c9a84c; background: rgba(201,168,76,0.1); }
+.post-menu-divider {
+    border-top: 1px solid rgba(255,255,255,0.08);
+    margin: 6px 4px;
+}
+.post-menu-danger { color: #ff6b6b; }
+.post-menu-danger:hover { background: rgba(255,107,107,0.1); }
 
 /* ── Capsule pill (same as dashboard/index) ── */
 .capsule-pill {
@@ -315,6 +374,27 @@
     transition: border-color 0.18s;
 }
 .comment-input:focus { border-color: rgba(201,168,76,0.4); }
+.vis-btn {
+    text-align: center;
+    padding: 7px 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.04);
+    color: #8b95a8;
+    font-size: 0.82rem;
+    transition: all 0.18s;
+    user-select: none;
+}
+.vis-radio:checked + .vis-btn {
+    background: rgba(201,168,76,0.15);
+    border-color: rgba(201,168,76,0.4);
+    color: #c9a84c;
+}
+.btn-gold:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    filter: grayscale(0.4);
+}
 </style>
 
 <div class="topbar">
@@ -350,7 +430,21 @@
                     @endforeach
                 </select>
 
-                <hr class="composer-divider">
+                {{-- Visibility --}}
+<div class="d-flex gap-2 mb-3">
+    @foreach(['public' => ['🌍','Public'], 'friends' => ['👥','Friends'], 'only_me' => ['🔒','Only Me']] as $val => $opt)
+    <label style="flex:1; cursor:pointer;">
+        <input type="radio" name="visibility" value="{{ $val }}"
+               {{ old('visibility', 'friends') === $val ? 'checked' : '' }}
+               style="display:none;" class="vis-radio">
+        <div class="vis-btn" data-val="{{ $val }}">
+            {{ $opt[0] }} {{ $opt[1] }}
+        </div>
+    </label>
+    @endforeach
+</div>
+
+<hr class="composer-divider">
 
                 <div class="composer-actions">
                     <div class="d-flex align-items-center gap-2">
@@ -364,7 +458,7 @@
                     </div>
                     <div class="d-flex gap-2">
                         <button type="button" class="btn btn-ghost btn-sm" id="composerCancel">Cancel</button>
-                        <button type="submit" class="btn btn-gold btn-sm">Post</button>
+                        <button type="submit" class="btn btn-gold btn-sm" id="composerPostBtn" disabled>Post</button>
                     </div>
                 </div>
 
@@ -417,12 +511,42 @@
         <div class="post-card">
 
             {{-- Header --}}
-            <div class="post-header">
+            <div class="post-header" style="position:relative;">
                 <img src="{{ $post->user->avatar_url }}" class="post-avatar" alt="">
-                <div>
+                <div style="flex:1;">
                     <div class="post-name">{{ $post->user->name }}</div>
                     <div class="post-date">{{ $post->created_at->diffForHumans() }}</div>
                 </div>
+
+                @if($post->user_id === Auth::id())
+                <div class="post-menu-wrap">
+                    <button type="button" class="post-menu-btn" onclick="togglePostMenu({{ $post->id }})">
+                        <i class="bi bi-three-dots"></i>
+                    </button>
+                    <div class="post-menu-dropdown" id="postMenu{{ $post->id }}">
+                        <div class="post-menu-label">Privacy</div>
+                        @foreach(['public' => ['🌍','Public'], 'friends' => ['👥','Friends'], 'only_me' => ['🔒','Only Me']] as $val => $opt)
+                        <form method="POST" action="{{ route('posts.visibility', $post) }}" class="post-menu-form">
+                            @csrf
+                            @method('PATCH')
+                            <input type="hidden" name="visibility" value="{{ $val }}">
+                            <button type="submit" class="post-menu-item {{ $post->visibility === $val ? 'active' : '' }}">
+                                {{ $opt[0] }} {{ $opt[1] }}
+                            </button>
+                        </form>
+                        @endforeach
+                        <div class="post-menu-divider"></div>
+                        <form method="POST" action="{{ route('posts.destroy', $post) }}" class="post-menu-form"
+                              onsubmit="return confirm('Delete this post? This cannot be undone.');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="post-menu-item post-menu-danger">
+                                🗑️ Delete post
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                @endif
             </div>
 
             {{-- Caption --}}
@@ -523,8 +647,9 @@
             <form method="POST" action="{{ route('posts.comments.store', $post) }}" class="comment-form">
                 @csrf
                 <img src="{{ Auth::user()->avatar_url }}" class="comment-avatar" alt="">
-                <input type="text" name="body" class="comment-input" placeholder="Write a comment...">
-                <button type="submit" class="btn btn-gold btn-sm">Post</button>
+               <input type="text" name="body" class="comment-input" placeholder="Write a comment..."
+                       oninput="this.nextElementSibling.disabled = this.value.trim().length === 0">
+                <button type="submit" class="btn btn-gold btn-sm" disabled>Post</button>
             </form>
 
         </div>
@@ -539,6 +664,7 @@
 
 @section('scripts')
 <script>
+
 // Composer open/close
 var trigger  = document.getElementById('composerTrigger');
 var form     = document.getElementById('composerForm');
@@ -575,5 +701,47 @@ function previewPostImage(input) {
         reader.readAsDataURL(input.files[0]);
     }
 }
+
+// Visibility toggle highlight
+document.querySelectorAll('.vis-radio').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+        document.querySelectorAll('.vis-btn').forEach(b => {
+            b.style.background = '';
+            b.style.borderColor = '';
+            b.style.color = '';
+        });
+    });
+});
+
+// Post button enable/disable based on content
+var captionField = form.querySelector('textarea[name="caption"]');
+var capsuleField  = form.querySelector('select[name="capsule_id"]');
+var imageField    = document.getElementById('postImage');
+var postBtn       = document.getElementById('composerPostBtn');
+
+function refreshPostBtn() {
+    var hasCaption = captionField.value.trim().length > 0;
+    var hasCapsule = capsuleField.value !== '';
+    var hasImage   = imageField.files && imageField.files.length > 0;
+    postBtn.disabled = !(hasCaption || hasCapsule || hasImage);
+}
+
+captionField.addEventListener('input', refreshPostBtn);
+capsuleField.addEventListener('change', refreshPostBtn);
+imageField.addEventListener('change', refreshPostBtn);
+refreshPostBtn();
+
+// 3-dot post menu toggle
+function togglePostMenu(id) {
+    var menu = document.getElementById('postMenu' + id);
+    var wasOpen = menu.classList.contains('open');
+    document.querySelectorAll('.post-menu-dropdown').forEach(m => m.classList.remove('open'));
+    if (!wasOpen) menu.classList.add('open');
+}
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.post-menu-wrap')) {
+        document.querySelectorAll('.post-menu-dropdown').forEach(m => m.classList.remove('open'));
+    }
+});
 </script>
 @endsection

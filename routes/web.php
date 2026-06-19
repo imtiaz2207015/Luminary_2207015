@@ -10,6 +10,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminCapsuleController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
 
 // Home
@@ -18,6 +19,13 @@ Route::get('/', function () { return redirect()->route('login'); });
 // Authenticated user routes
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    //Posts & Newsfeed
+    Route::get('/newsfeed', [PostController::class, 'index'])->name('newsfeed');
+    Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
+    Route::post('/posts/{post}/reactions', [PostController::class, 'toggleReaction'])->name('posts.reactions.toggle');
+    Route::post('/posts/{post}/comments', [PostController::class, 'storeComment'])->name('posts.comments.store');
+    Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
+    Route::patch('/posts/{post}/visibility', [PostController::class, 'updateVisibility'])->name('posts.visibility');
 
     // Capsules
     Route::get('/capsules', [CapsuleController::class, 'index'])->name('capsules.index');
@@ -29,13 +37,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/capsules/{capsule}', [CapsuleController::class, 'destroy'])->name('capsules.destroy');
     Route::post('/capsules/{capsule}/submit', [CapsuleController::class, 'submitToNewsfeed'])->name('capsules.submit');
 
-    // Newsfeed
-    Route::get('/newsfeed', [NewsfeedController::class, 'index'])->name('newsfeed');
-
     // Friends
     Route::get('/friends', [FriendController::class, 'index'])->name('friends.index');
     Route::get('/friends/search', [FriendController::class, 'search'])->name('friends.search');
     Route::post('/friends/{user}/request', [FriendController::class, 'sendRequest'])->name('friends.request');
+    Route::delete('/friends/{user}/cancel', [FriendController::class, 'cancelRequest'])->name('friends.cancel');
     Route::post('/friends/{friendship}/accept', [FriendController::class, 'acceptRequest'])->name('friends.accept');
     Route::post('/friends/{friendship}/decline', [FriendController::class, 'declineRequest'])->name('friends.decline');
     Route::delete('/friends/{user}/unfriend', [FriendController::class, 'unfriend'])->name('friends.unfriend');
@@ -58,6 +64,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::patch('/profile/font', [ProfileController::class, 'updateFont'])->name('profile.font');
 });
 
 // User logout

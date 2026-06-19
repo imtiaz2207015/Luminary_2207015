@@ -6,7 +6,7 @@
     <title>Luminary – @yield('title')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&family=Merriweather:wght@400;700&family=Lora:wght@400;600&family=Inter:wght@400;500;600&family=Poppins:wght@400;500;600&family=Roboto+Slab:wght@400;600&family=Dancing+Script:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --navy: #0a0f1e;
@@ -20,8 +20,15 @@
             --sidebar-w: 260px;
         }
         * { box-sizing: border-box; }
-        body { background: var(--navy); color: var(--text); font-family: 'DM Sans', sans-serif; margin: 0; min-height: 100vh; }
+        body { background: var(--navy); color: var(--text); font-family: var(--user-font, 'DM Sans', sans-serif); font-size: var(--user-font-size, 16px); margin: 0; min-height: 100vh; }
         h1,h2,h3,.display-font { font-family: 'Playfair Display', serif; }
+
+        /* User font preference overrides every hardcoded font-family on every page, everywhere — */
+        /* except elements explicitly marked .font-true-preview (used by the Settings font picker */
+        /* itself, so each option/trigger can still show what that font actually looks like) */
+        body, body *:not(.font-true-preview):not(.font-true-preview *) {
+            font-family: var(--user-font, 'DM Sans', sans-serif) !important;
+        }
 
         /* Sidebar */
         .sidebar {
@@ -131,6 +138,38 @@
             .main-content { margin-left: 0; padding: 1rem; }
         }
     </style>
+   @php
+        $fontMap = [
+            'default'      => "'DM Sans', sans-serif",
+            'playfair'     => "'Playfair Display', serif",
+            'dm_sans'      => "'DM Sans', sans-serif",
+            'serif'        => "Georgia, 'Times New Roman', serif",
+            'georgia'      => "Georgia, serif",
+            'merriweather' => "'Merriweather', serif",
+            'lora'         => "'Lora', serif",
+            'inter'        => "'Inter', sans-serif",
+            'poppins'      => "'Poppins', sans-serif",
+            'roboto_slab'  => "'Roboto Slab', serif",
+            'dancing_script' => "'Dancing Script', cursive",
+        ];
+        $sizeMap = [
+            'xs'     => '14px',
+            'sm'     => '15px',
+            'medium' => '16px',
+            'lg'     => '18px',
+            'xl'     => '20px',
+        ];
+        $activeFont = $fontMap[Auth::user()->font_style ?? 'default'] ?? $fontMap['default'];
+        $activeSize = $sizeMap[Auth::user()->font_size ?? 'medium'] ?? $sizeMap['medium'];
+    @endphp
+    @auth
+    <style>
+        :root {
+            --user-font: {{ $activeFont }};
+            --user-font-size: {{ $activeSize }};
+        }
+    </style>
+    @endauth
     @yield('styles')
 </head>
 <body>
@@ -159,8 +198,8 @@
             @php $unread = Auth::user()->notifications()->whereNull('read_at')->count(); @endphp
             @if($unread > 0) <span class="ms-auto badge-gold">{{ $unread }}</span> @endif
         </a>
-        <a href="{{ route('profile.edit') }}" class="nav-item-custom {{ request()->routeIs('profile.*') ? 'active' : '' }}">
-            <i class="bi bi-person"></i> Profile
+       <a href="{{ route('profile.edit') }}" class="nav-item-custom {{ request()->routeIs('profile.*') ? 'active' : '' }}">
+            <i class="bi bi-gear"></i> Settings
         </a>
     </nav>
     <div class="sidebar-footer">

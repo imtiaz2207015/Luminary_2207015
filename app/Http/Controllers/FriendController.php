@@ -25,13 +25,41 @@ class FriendController extends Controller {
 }
 
     public function search(Request $request) {
-        $query = $request->q;
-        $users = User::where('id', '!=', Auth::id())
-            ->where('name', 'like', "%{$query}%")
-            ->orWhere('email', 'like', "%{$query}%")
-            ->take(10)->get();
-        return view('friends.index', compact('users', 'query'));
+    $query = $request->q;
+    $users = User::where('id', '!=', Auth::id())
+        ->where(function($q) use ($query) {
+            $q->where('name', 'like', "%{$query}%")
+              ->orWhere('email', 'like', "%{$query}%");
+        })
+        ->take(10)->get();
+
+    // Build a map of user_id => ['status' => ..., 'friendship_id' => ...]
+    $friendshipMap = [];
+    foreach ($users as $user) {
+        $friendship = Friendship::where('user_id', Auth::id())
+            ->where('friend_id', $user->id)
+            ->first();
+        if ($friendship) {
+            $friendshipMap[$user->id] = [
+                'status' => $friendship->status,
+                'friendship_id' => $friendship->id,
+            ];
+        } else {
+            // Check if they sent us a request
+            $reverse = Friendship::where('user_id', $user->id)
+                ->where('friend_id', Auth::id())
+                ->first();
+            if ($reverse) {
+                $friendshipMap[$user->id] = [
+                    'status' => 'received',
+                    'friendship_id' => $reverse->id,
+                ];
+            }
+        }
     }
+
+    return view('friends.index', compact('users', 'query', 'friendshipMap'));
+}
 
    public function sendRequest(User $user) {
     $exists = Friendship::where(function($q) use ($user) {
@@ -53,6 +81,14 @@ class FriendController extends Controller {
         ]);
     }
     return back()->with('success', 'Friend request sent!');
+}
+
+public function cancelRequest(User $user) {
+    Friendship::where('user_id', Auth::id())
+        ->where('friend_id', $user->id)
+        ->where('status', 'pending')
+        ->delete();
+    return back()->with('success', 'Friend request cancelled.');
 }
 
     public function acceptRequest(Friendship $friendship) {

@@ -26,10 +26,40 @@
                     <div style="color:#8b95a8; font-size:0.78rem;">{{ $user->email }}</div>
                 </div>
             </div>
-            <form method="POST" action="{{ route('friends.request', $user) }}">
-                @csrf
-                <button class="btn btn-gold btn-sm">+ Add Friend</button>
-            </form>
+           @php
+    $fs = $friendshipMap[$user->id] ?? null;
+@endphp
+
+@if($fs && $fs['status'] === 'accepted')
+    {{-- Already friends --}}
+    <button class="btn btn-sm" style="background:rgba(78,205,196,0.15); border:1px solid #4ecdc4; color:#4ecdc4;" disabled>
+        Friends ✓
+    </button>
+
+@elseif($fs && $fs['status'] === 'pending')
+    {{-- We sent a request — show Requested, click to cancel --}}
+    <form method="POST" action="{{ route('friends.cancel', $user) }}" id="cancel-form-{{ $user->id }}">
+        @csrf @method('DELETE')
+        <button type="button" class="btn btn-sm btn-requested"
+            onclick="confirmCancel({{ $user->id }}, '{{ $user->name }}')"
+            style="background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.2); color:#8b95a8;">
+            Requested
+        </button>
+    </form>
+
+@elseif($fs && $fs['status'] === 'received')
+    {{-- They sent us a request --}}
+    <button class="btn btn-sm" style="background:rgba(201,168,76,0.15); border:1px solid #c9a84c; color:#c9a84c;" disabled>
+        Respond in Requests ↑
+    </button>
+
+@else
+    {{-- No relationship --}}
+    <form method="POST" action="{{ route('friends.request', $user) }}">
+        @csrf
+        <button class="btn btn-gold btn-sm">+ Add Friend</button>
+    </form>
+@endif
         </div>
         @empty
         <p style="color:#8b95a8; font-size:0.85rem; margin:0;">No users found for "{{ request('q') }}"</p>
@@ -98,4 +128,11 @@
     </div>
     @endif
 </div>
+<script>
+function confirmCancel(userId, userName) {
+    if (confirm('Cancel your friend request to ' + userName + '?')) {
+        document.getElementById('cancel-form-' + userId).submit();
+    }
+}
+</script>
 @endsection

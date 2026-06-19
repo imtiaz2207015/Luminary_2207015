@@ -54,7 +54,26 @@ class ProfileController extends Controller
     $request->user()->save();
 
     return redirect()->route('profile.edit')->with('success', 'Profile updated!');
+
 }
+
+/**
+     * Update the user's font preferences.
+     */
+    public function updateFont(Request $request): RedirectResponse
+    {
+        $request->validate([
+           'font_style' => ['required', 'string', 'in:default,playfair,dm_sans,serif,georgia,merriweather,lora,inter,poppins,roboto_slab,dancing_script'],
+            'font_size'  => ['required', 'string', 'in:xs,sm,medium,lg,xl'],
+        ]);
+
+        $request->user()->update([
+            'font_style' => $request->font_style,
+            'font_size'  => $request->font_size,
+        ]);
+
+        return back()->with('success', 'Font preferences updated!');
+    }
 
     /**
      * Delete the user's account.
