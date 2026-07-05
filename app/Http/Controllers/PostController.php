@@ -12,43 +12,42 @@ use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
-    public function index()
-    {
-        $userId = Auth::id();
+   public function index()
+{
+    $userId = Auth::id();
 
-        $friendIds = Friendship::where(function($q) use ($userId) {
-                $q->where('user_id', $userId)
-                  ->orWhere('friend_id', $userId);
-            })
-            ->where('status', 'accepted')
-            ->get()
-            ->map(fn($f) => $f->user_id === $userId ? $f->friend_id : $f->user_id)
-            ->push($userId);
+    $friendIds = Friendship::where(function($q) use ($userId) {
+            $q->where('user_id', $userId)
+              ->orWhere('friend_id', $userId);
+        })
+        ->where('status', 'accepted')
+        ->get()
+        ->map(fn($f) => $f->user_id === $userId ? $f->friend_id : $f->user_id)
+        ->push($userId);
 
-        $posts = Post::with(['user', 'capsule', 'reactions', 'comments.user'])
-            ->whereIn('user_id', $friendIds)
-            ->where(function($q) use ($userId, $friendIds) {
-                $q->where('visibility', 'public')
-                  ->orWhere(function($q2) use ($userId, $friendIds) {
-                      $q2->where('visibility', 'friends')
-                         ->whereIn('user_id', $friendIds);
-                  })
-                  ->orWhere(function($q3) use ($userId) {
-                      $q3->where('visibility', 'only_me')
-                         ->where('user_id', $userId);
-                  });
-            })
-            ->latest()
-            ->paginate(10);
+    $posts = Post::with(['user', 'capsule', 'reactions', 'comments.user'])
+        ->where(function ($q) use ($userId, $friendIds) {
+            $q->where('visibility', 'public') // visible platform-wide
+              ->orWhere(function ($q2) use ($friendIds) {
+                  $q2->where('visibility', 'friends')
+                     ->whereIn('user_id', $friendIds);
+              })
+              ->orWhere(function ($q3) use ($userId) {
+                  $q3->where('visibility', 'only_me')
+                     ->where('user_id', $userId);
+              });
+        })
+        ->latest()
+        ->paginate(10);
 
-        $myCapsules = Capsule::where('user_id', $userId)
-            ->where('is_locked', false)
-            ->where('status', 'approved')
-            ->latest()
-            ->get();
+    $myCapsules = Capsule::where('user_id', $userId)
+        ->where('unlock_date', '<=', now())
+        ->where('status', 'approved')
+        ->latest()
+        ->get();
 
-        return view('newsfeed.index', compact('posts', 'myCapsules'));
-    }
+    return view('newsfeed.index', compact('posts', 'myCapsules'));
+}
 
     public function store(Request $request)
     {

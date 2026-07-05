@@ -67,9 +67,6 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile/font', [ProfileController::class, 'updateFont'])->name('profile.font');
 });
 
-// User logout
-Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
-
 
 // Admin auth
 Route::get('/admin/login', [AdminController::class, 'showLogin'])->name('admin.login');
