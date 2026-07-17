@@ -15,10 +15,14 @@ Luminary is where you write down your dreams, goals, and letters — lock them a
 - **📝 Create Capsules** — Write letters, goals, or dreams to your future self
 - **🔒 Lock & Seal** — Set a deadline. Your capsule stays sealed until the date arrives
 - **👁️ Visibility Control** — Choose who sees your capsule: Only You, Friends, or the World
-- **👥 Group Capsules** — Set goals together with friends in a shared capsule
-- **🌍 Newsfeed** — A LinkedIn-style feed of inspiring stories from real people's journeys
-- **🛡️ Admin Moderation** — All public submissions are reviewed before appearing in the newsfeed
+- **👥 Group Capsules** — Set goals together with friends in a shared capsule, with member roles (owner/contributor)
+- **🤝 Friend System** — Send, accept, or decline friend requests; view friends' unlocked capsules
+- **🌍 Newsfeed** — A social feed of posts and inspiring capsule stories from real people's journeys
+- **💬 Comments & Reactions** — React to capsules and posts (inspired / goals / proud) and leave comments
+- **🔔 Notifications** — Get notified of friend requests, reactions, comments, and capsule approvals
+- **🛡️ Admin Moderation** — All public submissions are reviewed before appearing in the newsfeed; admins can manage users and roles
 - **📊 Dashboard** — Track your capsules, countdowns, and upcoming unlocks
+- **🎨 Profile Customization** — Set an avatar, bio, and preferred font style/size
 
 ---
 
@@ -26,13 +30,15 @@ Luminary is where you write down your dreams, goals, and letters — lock them a
 
 | Page | Description |
 |------|-------------|
-| 🏠 Landing | Introduction, how it works, preview of public capsules |
+| 🔐 Login / Register | Authentication with email verification and password reset |
 | 📊 Dashboard | Summary of your capsules and upcoming unlocks |
 | 💊 My Capsules | View, manage, and share your personal capsules |
-| 👥 Friends' Capsules | See capsules from people you follow (after their deadline) |
-| 🌍 Newsfeed | Scroll through inspiring public capsules |
-| ➕ Create Capsule | 4-step capsule creation flow |
-| 🛡️ Admin Panel | Review and moderate capsules submitted for public sharing |
+| 👥 Friends | Search users, manage friend requests, view friends' capsules |
+| 🌍 Newsfeed | Scroll through posts and public capsule stories |
+| ➕ Create Capsule | Capsule creation flow with visibility and group options |
+| 🔔 Notifications | View and mark notifications as read |
+| 👤 Profile | Edit account details, avatar, bio, and font preferences |
+| 🛡️ Admin Panel | Review and moderate capsules, manage users |
 
 ---
 
@@ -53,16 +59,17 @@ Luminary is where you write down your dreams, goals, and letters — lock them a
 - **Colors**: Midnight navy `#0a0f1e`, Gold accent `#c9a84c`, Teal `#4ecdc4`, Warm white `#f5f0e8`
 - **Fonts**: `Playfair Display` (headings) + `DM Sans` (body)
 - **Style**: Glassmorphism cards, glowing accents, smooth animations
-- **Icons**: Lucide React
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: React + Tailwind CSS
-- **State Management**: React useState / useContext
-- **Icons**: Lucide React
-- **Fonts**: Google Fonts
+- **Backend**: Laravel (PHP)
+- **Frontend**: Laravel Blade templates + Alpine.js
+- **Styling**: Tailwind CSS
+- **Database**: MySQL
+- **Build tool**: Vite
+- **Auth**: Laravel's built-in authentication (Breeze-based) + custom admin guard
 
 ---
 
@@ -70,23 +77,30 @@ Luminary is where you write down your dreams, goals, and letters — lock them a
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/luminary.git
+git clone https://github.com/imtiaz2207015/Luminary_2207015.git
 
 # Navigate into the project
-cd luminary
+cd Luminary_2207015
 
-# Install dependencies
+# Install PHP dependencies
+composer install
+
+# Install JS dependencies
 npm install
 
-# Start the development server
+# Copy the environment file and set your MySQL credentials
+cp .env.example .env
+php artisan key:generate
+
+# Run migrations
+php artisan migrate
+
+# Build frontend assets
 npm run dev
+
+# Serve the application
+php artisan serve
 ```
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Feel free to open an issue or submit a pull request.
 
 ---
 
