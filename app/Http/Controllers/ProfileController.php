@@ -7,24 +7,41 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use App\Models\User;
 use App\Models\Capsule;
 
 class ProfileController extends Controller
 {
-    public function show(User $user)
-{
-    $capsules = Capsule::where('user_id', $user->id)
-        ->where('visibility', 'friends')
-        ->where('is_locked', false)
-        ->where('status', 'approved')
-        ->with('reactions')
-        ->latest()
-        ->get();
+    /**
+     * Display the specified user's profile.
+     */
+    public function show(User $user): View
+    {
+        $viewer = auth()->user();
 
-    return view('profile.show', compact('user', 'capsules'));
-}
+        $query = Capsule::where('user_id', $user->id)
+            ->where('is_locked', false)
+            ->where('status', 'approved')
+            ->with('reactions')
+            ->latest();
+
+        if ($viewer && $viewer->id === $user->id) {
+            // Own profile: show public + friends capsules
+            $query->whereIn('visibility', ['public', 'friends']);
+        } elseif ($viewer && $viewer->isFriendsWith($user)) {
+            // Confirmed friend: show public + friends capsules
+            $query->whereIn('visibility', ['public', 'friends']);
+        } else {
+            // Stranger or guest: only public
+            $query->where('visibility', 'public');
+        }
+
+        $capsules = $query->get();
+
+        return view('profile.show', compact('user', 'capsules'));
+    }
 
     /**
      * Display the user's profile form.
@@ -39,40 +56,29 @@ class ProfileController extends Controller
     /**
      * Update the user's profile information.
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse {
-    $request->user()->fill($request->validated());
-
-    if ($request->hasFile('avatar')) {
-        $path = $request->file('avatar')->store('avatars', 'public');
-        $request->user()->avatar = $path;
-    }
-
-    if ($request->user()->isDirty('email')) {
-        $request->user()->email_verified_at = null;
-    }
-
-    $request->user()->save();
-
-    return redirect()->route('profile.edit')->with('success', 'Profile updated!');
-
-}
-
-/**
-     * Update the user's font preferences.
-     */
-    public function updateFont(Request $request): RedirectResponse
+    public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->validate([
-           'font_style' => ['required', 'string', 'in:default,playfair,dm_sans,serif,georgia,merriweather,lora,inter,poppins,roboto_slab,dancing_script'],
-            'font_size'  => ['required', 'string', 'in:xs,sm,medium,lg,xl'],
-        ]);
+        $user = $request->user();
 
-        $request->user()->update([
-            'font_style' => $request->font_style,
-            'font_size'  => $request->font_size,
-        ]);
+        $user->fill($request->validated());
 
-        return back()->with('success', 'Font preferences updated!');
+        if ($request->hasFile('avatar')) {
+            // Delete old avatar from storage before saving the new one
+            if ($user->avatar) {
+                Storage::disk('public')->delete($user->avatar);
+            }
+
+            $path = $request->file('avatar')->store('avatars', 'public');
+            $user->avatar = $path;
+        }
+
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
+        }
+
+        $user->save();
+
+        return redirect()->route('profile.edit')->with('success', 'Profile updated!');
     }
 
     /**
@@ -88,6 +94,11 @@ class ProfileController extends Controller
 
         Auth::logout();
 
+        // Clean up avatar file on account deletion
+        if ($user->avatar) {
+            Storage::disk('public')->delete($user->avatar);
+        }
+
         $user->delete();
 
         $request->session()->invalidate();
@@ -95,7 +106,4 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
-    
 }
-
-

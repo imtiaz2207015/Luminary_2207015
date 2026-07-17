@@ -8,7 +8,7 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable {
     use HasFactory, Notifiable;
 
-   protected $fillable = ['name', 'email', 'password', 'role', 'avatar', 'bio', 'font_style', 'font_size'];
+   protected $fillable = ['name', 'email', 'password', 'role', 'avatar', 'bio'];
     protected $hidden = ['password', 'remember_token'];
     protected function casts(): array {
         return ['email_verified_at' => 'datetime', 'password' => 'hashed'];
@@ -26,6 +26,22 @@ class User extends Authenticatable {
         return $this->hasMany(Friendship::class)->where('status', 'accepted');
     }
     public function isAdmin() { return $this->role === 'admin'; }
+
+    /**
+     * Check whether this user has an accepted friendship with another user.
+     * Friendships can be stored in either direction, so we check both.
+     */
+    public function isFriendsWith(User $other): bool
+    {
+        return Friendship::where('status', 'accepted')
+            ->where(function ($q) use ($other) {
+                $q->where('user_id', $this->id)->where('friend_id', $other->id);
+            })
+            ->orWhere(function ($q) use ($other) {
+                $q->where('user_id', $other->id)->where('friend_id', $this->id);
+            })
+            ->exists();
+    }
 
     public function getAvatarUrlAttribute() {
         return $this->avatar
