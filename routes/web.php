@@ -45,8 +45,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/friends/{friendship}/accept', [FriendController::class, 'acceptRequest'])->name('friends.accept');
     Route::post('/friends/{friendship}/decline', [FriendController::class, 'declineRequest'])->name('friends.decline');
     Route::delete('/friends/{user}/unfriend', [FriendController::class, 'unfriend'])->name('friends.unfriend');
-   Route::get('/friends/{friendId}/capsules', [FriendController::class, 'showCapsules'])
-    ->name('friends.capsules');
+    Route::get('/friends/{friendId}/capsules', [FriendController::class, 'showCapsules'])->name('friends.capsules');
 
     // Reactions
     Route::post('/capsules/{capsule}/react', [ReactionController::class, 'toggle'])->name('reactions.toggle');
@@ -87,4 +86,3 @@ Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
 });
 
 require __DIR__.'/auth.php';
-
