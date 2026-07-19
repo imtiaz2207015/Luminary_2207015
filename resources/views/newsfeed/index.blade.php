@@ -1,6 +1,5 @@
-@extends('layouts.app')
-@section('title', 'Newsfeed')
-@section('content')
+<x-app-layout>
+<x-slot name="title">Newsfeed</x-slot>
 
 <style>
 /* ── Feed width constraint (scoped to this page only) ── */
@@ -660,9 +659,7 @@
 
 </div>
 
-@endsection
-
-@section('scripts')
+<x-slot name="scripts">
 <script>
 
 // Composer open/close
@@ -744,4 +741,5 @@ document.addEventListener('click', function(e) {
     }
 });
 </script>
-@endsection
+</x-slot>
+</x-app-layout>

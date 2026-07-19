@@ -1,3 +1,8 @@
+
+//"Breeze handles the user-facing authentication and application. The admin panel is a completely separate section with its own login, its own access control, and different UI requirements — so it intentionally uses its own dedicated layout. This is the standard way to build admin panels in Laravel."
+
+
+
 @extends('layouts.admin')
 @section('title', 'All Capsules')
 @section('content')

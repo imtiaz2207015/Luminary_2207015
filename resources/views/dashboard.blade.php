@@ -1,6 +1,5 @@
-@extends('layouts.app')
-@section('title', 'Dashboard')
-@section('content')
+<x-app-layout>
+<x-slot name="title">Dashboard</x-slot>
 
 <style>
 .capsule-pill {
@@ -406,9 +405,7 @@
     @endforeach
 @endif
 
-@endsection
-
-@section('scripts')
+<x-slot name="scripts">
 <script>
 function updateCountdowns() {
     document.querySelectorAll('.countdown-timer').forEach(function(el) {
@@ -424,4 +421,5 @@ function updateCountdowns() {
 updateCountdowns();
 setInterval(updateCountdowns, 1000);
 </script>
-@endsection
+</x-slot>
+</x-app-layout>

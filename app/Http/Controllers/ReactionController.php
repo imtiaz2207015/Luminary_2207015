@@ -25,7 +25,7 @@ class ReactionController extends Controller {
             abort_if(!$isFriend && $capsule->user_id !== Auth::id(), 403);
         }
 
-        $request->validate(['type' => 'required|in:inspired,goals,proud']);
+        $request->validate(['type' => 'required|in:like,love,wow,sad,goals']);
         $existing = Reaction::where('user_id', Auth::id())
             ->where('capsule_id', $capsule->id)->first();
         if ($existing) {
@@ -58,6 +58,16 @@ class ReactionController extends Controller {
         ]);
     }
 }
-        return back()->with('success', 'Reaction ' . $action . '!');
+       return response()->json([
+    'action' => $action,
+    'type' => $request->type,
+    'counts' => [
+        'like' => $capsule->reactionCount('like'),
+        'love' => $capsule->reactionCount('love'),
+        'wow' => $capsule->reactionCount('wow'),
+        'sad' => $capsule->reactionCount('sad'),
+        'goals' => $capsule->reactionCount('goals'),
+    ],
+]);
     }
 }

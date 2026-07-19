@@ -11,6 +11,7 @@ use App\Http\Controllers\AdminCapsuleController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\QuoteController;
 use Illuminate\Support\Facades\Route;
 
 // Home
@@ -63,6 +64,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+
+ // Reflection Quote (external API via Guzzle, rate-limited)
+    Route::get('/quote-json', [QuoteController::class, 'getRandomQuoteJson'])
+        ->middleware('quote.throttle')
+        ->name('quote.json');
 });
 
 

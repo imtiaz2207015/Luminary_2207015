@@ -7,7 +7,8 @@ use Carbon\Carbon;
 class Capsule extends Model {
     protected $fillable = [
         'user_id','title','content','unlock_date','is_locked',
-        'visibility','status','is_group','group_name','reject_reason','sealed_at'
+        'visibility','status','is_group','group_name','reject_reason','sealed_at',
+        'quote_text','quote_author'
     ];
     protected $casts = [
         'unlock_date' => 'datetime',

@@ -1,6 +1,4 @@
-@extends('layouts.guest')
-@section('title', 'Login')
-@section('content')
+<x-guest-layout>
 @if(session('error'))
     <div class="alert-error">{{ session('error') }}</div>
 @endif
@@ -31,4 +29,4 @@
     Don't have an account? <a href="{{ route('register') }}" class="auth-link">Create one</a>
 </div>
 <a href="{{ route('admin.login') }}" class="admin-btn">Admin Login</a>
-@endsection
+</x-guest-layout>

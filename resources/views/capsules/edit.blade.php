@@ -1,6 +1,5 @@
-@extends('layouts.app')
-@section('title', 'Edit Capsule')
-@section('content')
+<x-app-layout>
+<x-slot name="title">Edit Capsule</x-slot>
 
 <div class="topbar">
     <div>
@@ -49,4 +48,4 @@
         </div>
     </div>
 </div>
-@endsection
+</x-app-layout>

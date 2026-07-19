@@ -1,6 +1,5 @@
-@extends('layouts.app')
-@section('title', 'Settings')
-@section('content')
+<x-app-layout>
+<x-slot name="title">Settings</x-slot>
 
 <style>
 .profile-view-row {
@@ -235,6 +234,21 @@
                 </form>
             </div>
 
+            {{-- Delete Account --}}
+            <div class="glass-card p-4" style="border-color:rgba(220,53,69,0.2);">
+                <h5 style="font-family:'Playfair Display',serif; color:#ff6b6b; margin-bottom:0.5rem;">Danger Zone</h5>
+                <p style="color:#8b95a8; font-size:0.85rem; margin-bottom:1.5rem;">Once deleted, your account and all capsules are permanently gone.</p>
+                <button class="btn btn-danger-soft" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete Account</button>
+            </div>
+        </div>
+
+        {{-- ══════════════ PRIVACY PANEL ══════════════ --}}
+        <div class="settings-panel" id="panel-privacy">
+            <div class="glass-card p-4 mb-4">
+                <h5 style="font-family:'Playfair Display',serif; color:#f5f0e8; margin-bottom:0.5rem;">Privacy</h5>
+                <p style="color:#8b95a8; font-size:0.88rem; margin-bottom:1.5rem;">Manage your account security here.</p>
+            </div>
+
             {{-- Update Password --}}
             <div class="glass-card p-4 mb-4">
                 <h5 style="font-family:'Playfair Display',serif; color:#f5f0e8; margin-bottom:1.5rem;">Change Password</h5>
@@ -256,21 +270,6 @@
                     </div>
                     <button type="submit" class="btn btn-gold">Update Password</button>
                 </form>
-            </div>
-
-            {{-- Delete Account --}}
-            <div class="glass-card p-4" style="border-color:rgba(220,53,69,0.2);">
-                <h5 style="font-family:'Playfair Display',serif; color:#ff6b6b; margin-bottom:0.5rem;">Danger Zone</h5>
-                <p style="color:#8b95a8; font-size:0.85rem; margin-bottom:1.5rem;">Once deleted, your account and all capsules are permanently gone.</p>
-                <button class="btn btn-danger-soft" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete Account</button>
-            </div>
-        </div>
-
-        {{-- ══════════════ PRIVACY PANEL (placeholder) ══════════════ --}}
-        <div class="settings-panel" id="panel-privacy">
-            <div class="glass-card p-4">
-                <h5 style="font-family:'Playfair Display',serif; color:#f5f0e8; margin-bottom:0.5rem;">Privacy</h5>
-                <p style="color:#8b95a8; font-size:0.88rem; margin:0;">Privacy controls are coming soon. This is where you'll manage who can see your capsules, posts, and profile by default.</p>
             </div>
         </div>
 
@@ -314,9 +313,7 @@
     </div>
 </div>
 
-@endsection
-
-@section('scripts')
+<x-slot name="scripts">
 <script>
 (function() {
     var viewMode   = document.getElementById('profileViewMode');
@@ -341,9 +338,8 @@
     cancelBtn.addEventListener('click', exitEditMode);
 
     if (hasErrors) {
-        enterEditMode();
-        switchSettingsPanel('panel-profile', document.querySelector('[data-panel="panel-profile"]'));
-    }
+    switchSettingsPanel('panel-privacy', document.querySelector('[data-panel="panel-privacy"]'));
+}
 
     // Live avatar preview when a new file is chosen
     var avatarInput = document.getElementById('avatarInput');
@@ -374,4 +370,5 @@ function switchSettingsPanel(panelId, navEl) {
 }
 
 </script>
-@endsection
+</x-slot>
+</x-app-layout>

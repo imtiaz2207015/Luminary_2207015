@@ -1,6 +1,5 @@
-@extends('layouts.app')
-@section('title', $friend->name . "'s Profile")
-@section('content')
+<x-app-layout>
+<x-slot name="title">{{ $friend->name }}'s Profile</x-slot>
 
 {{-- Back Arrow Header --}}
 <div class="topbar">
@@ -78,5 +77,5 @@
 </div>
 @endif
 
-@endsection
+</x-app-layout>
 

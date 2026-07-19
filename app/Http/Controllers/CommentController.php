@@ -32,12 +32,20 @@ if ($capsule->user_id !== Auth::id()) {
         ]),
     ]);
 }
-    return back()->with('success', 'Comment added!');
+    $comment = Comment::latest()->first();
+return response()->json([
+    'id' => $comment->id,
+    'body' => $comment->body,
+    'user_name' => Auth::user()->name,
+    'avatar_url' => Auth::user()->avatar_url,
+    'created_at' => $comment->created_at->diffForHumans(),
+    'count' => $capsule->comments()->count(),
+]);
 }
 
     public function destroy(Comment $comment) {
         abort_if($comment->user_id !== Auth::id(), 403);
         $comment->delete();
-        return back()->with('success', 'Comment deleted.');
+       return response()->json(['deleted' => true]);
     }
 }

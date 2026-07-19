@@ -1,6 +1,5 @@
-@extends('layouts.app')
-@section('title', 'Notifications')
-@section('content')
+<x-app-layout>
+<x-slot name="title">Notifications</x-slot>
 
 <div class="topbar">
     <div>
@@ -86,4 +85,4 @@
 
     <div class="mt-3">{{ $notifications->links() }}</div>
 @endif
-@endsection
+</x-app-layout>

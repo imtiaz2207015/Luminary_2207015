@@ -1,6 +1,5 @@
-@extends('layouts.app')
-@section('title', 'New Capsule')
-@section('content')
+<x-app-layout>
+<x-slot name="title">New Capsule</x-slot>
 
 <div class="topbar">
     <div>
@@ -27,6 +26,25 @@
                     <textarea name="content" class="form-control" rows="10"
                               placeholder="Pour your heart out — your goals, dreams, fears, hopes. Your future self will thank you...">{{ old('content') }}</textarea>
                     @error('content') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                </div>
+
+                {{-- Reflection Quote widget --}}
+                <div class="mb-4">
+                    <label class="form-label">Reflection Quote <span style="color:#8b95a8; font-weight:400;">(optional)</span></label>
+                    <div>
+                        <button
+                            type="button"
+                            class="btn btn-ghost js-get-inspired-btn"
+                            data-target="capsule"
+                            data-url="{{ route('quote.json') }}"
+                        >
+                            ✨ Get inspired
+                        </button>
+                        <p style="color:#8b95a8; font-size:0.78rem; margin:6px 0 0;">Attach a quote for your future self to read alongside this capsule.</p>
+                        <div id="capsule-result" class="mt-2"></div>
+                        <input type="hidden" name="quote_text" id="capsule-quote-text">
+                        <input type="hidden" name="quote_author" id="capsule-quote-author">
+                    </div>
                 </div>
 
                 <div class="row g-3 mb-4">
@@ -90,12 +108,11 @@
         </div>
     </div>
 </div>
-@endsection
-
-@section('scripts')
+<x-slot name="scripts">
 <script>
 document.getElementById('isGroup').addEventListener('change', function() {
     document.getElementById('groupFields').style.display = this.checked ? 'block' : 'none';
 });
 </script>
-@endsection
+</x-slot>
+</x-app-layout>

@@ -1,6 +1,5 @@
-@extends('layouts.app')
-@section('title', 'Friends')
-@section('content')
+<x-app-layout>
+<x-slot name="title">Friends</x-slot>
 
 <div class="topbar">
     <div>
@@ -135,4 +134,4 @@ function confirmCancel(userId, userName) {
     }
 }
 </script>
-@endsection
+</x-app-layout>

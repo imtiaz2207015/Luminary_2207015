@@ -1,6 +1,5 @@
-@extends('layouts.app')
-@section('title', 'My Capsules')
-@section('content')
+<x-app-layout>
+<x-slot name="title">My Capsules</x-slot>
 
 <style>
 .capsule-pill {
@@ -381,9 +380,7 @@
 
     <div class="mt-4">{{ $capsules->links() }}</div>
 @endif
-@endsection
-
-@section('scripts')
+<x-slot name="scripts">
 <script>
 function updateCountdowns() {
     document.querySelectorAll('.countdown-timer').forEach(function(el) {
@@ -399,4 +396,5 @@ function updateCountdowns() {
 updateCountdowns();
 setInterval(updateCountdowns, 1000);
 </script>
-@endsection
+</x-slot>
+</x-app-layout>

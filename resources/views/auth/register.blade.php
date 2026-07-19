@@ -1,6 +1,4 @@
-@extends('layouts.guest')
-@section('title', 'Register')
-@section('content')
+<x-guest-layout>
 <form method="POST" action="{{ route('register') }}">
     @csrf
     <div class="mb-3">
@@ -28,4 +26,4 @@
 <div class="text-center" style="color:#8b95a8; font-size:0.85rem;">
     Already have an account? <a href="{{ route('login') }}" class="auth-link">Sign in</a>
 </div>
-@endsection
+</x-guest-layout>

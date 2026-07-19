@@ -22,29 +22,33 @@ class CapsuleController extends Controller {
     }
 
     public function store(Request $request) {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'unlock_date' => ['required', 'date', 'date_format:Y-m-d', 'after:today'],
-            'visibility' => 'required|in:only_me,friends,public',
-            'lock_type' => 'required|in:locked,draft',
-        ]);
+       $request->validate([
+    'title' => 'required|string|max:255',
+    'content' => 'required|string',
+    'unlock_date' => ['required', 'date', 'date_format:Y-m-d', 'after:today'],
+    'visibility' => 'required|in:only_me,friends,public',
+    'lock_type' => 'required|in:locked,draft',
+    'quote_text' => 'nullable|string|max:500',
+    'quote_author' => 'nullable|string|max:255',
+]);
 
         $status = $request->lock_type === 'locked' ? 'locked' : 'draft';
         $isLocked = $request->lock_type === 'locked';
 
-        $capsule = Capsule::create([
-            'user_id' => Auth::id(),
-            'title' => $request->title,
-            'content' => $request->content,
-            'unlock_date' => $request->unlock_date . ' ' . now()->format('H:i:s'),
-            'is_locked' => $isLocked,
-            'visibility' => $request->visibility,
-            'status' => $status,
-            'is_group' => $request->has('is_group'),
-            'group_name' => $request->group_name,
-            'sealed_at' => $isLocked ? now() : null,
-        ]);
+     $capsule = Capsule::create([
+    'user_id' => Auth::id(),
+    'title' => $request->title,
+    'content' => $request->content,
+    'quote_text' => $request->quote_text,
+    'quote_author' => $request->quote_author,
+    'unlock_date' => $request->unlock_date . ' ' . now()->format('H:i:s'),
+    'is_locked' => $isLocked,
+    'visibility' => $request->visibility,
+    'status' => $status,
+    'is_group' => $request->has('is_group'),
+    'group_name' => $request->group_name,
+    'sealed_at' => $isLocked ? now() : null,
+]);
 
         if ($request->hasFile('files')) {
             foreach ($request->file('files') as $file) {
