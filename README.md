@@ -4,13 +4,21 @@ A personal time capsule platform — write messages, memories, or reflections to
 
 ## Features
 
-- Create time capsules with a custom unlock date
-- Visibility control: private (only me), friends, or group capsules
-- Live countdown timers until unlock
-- Friends system and social newsfeed
-- Notifications for capsule activity
-- Capsule review/approval workflow for shared capsules
-- Customizable font style and size per user
+- User authentication and profile management (Laravel Breeze)
+- Role-based access control via custom middleware (admin vs regular users)
+- Create time capsules with title, description, unlock date, and attached files
+- Capsules stay locked until their unlock date, then automatically become viewable
+- Capsule membership: invite others to collaborate on a shared capsule
+- Friend system: search, send, accept, or decline friend requests
+- Posts, comments, and reactions within unlocked capsules
+- Real-time notifications for friend requests, invitations, comments, and upcoming unlocks
+- Live countdown timers and instant search, powered by Alpine.js
+- Dedicated JSON API layer for capsules, posts, comments, reactions, and notifications
+- Administrative dashboard for monitoring users and capsules
+
+## Course context
+
+Built as a project for CSE 3100 (Web Programming Laboratory), Department of Computer Science & Engineering, Khulna University of Engineering & Technology.
 
 ## Tech stack
 
