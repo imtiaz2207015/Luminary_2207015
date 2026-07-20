@@ -200,34 +200,35 @@ body { animation: drift 25s ease-in-out infinite alternate; background-size: 200
             .main-content { margin-left: 0; padding: 1rem; }
         }
 
+        // FEATURE: ambient CSS START
         .ambient-field {
-    position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
-}
-.ambient-star, .ambient-capsule {
-    position: absolute;
-    animation: ambient-float 6s ease-in-out infinite;
-}
-.ambient-star.small { animation-duration: 8s; }
-@keyframes ambient-float {
-    0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.7; }
-    50% { transform: translateY(-10px) rotate(15deg); opacity: 1; }
-}
+        position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+    }
+    .ambient-star, .ambient-capsule {
+        position: absolute;
+        animation: ambient-float 6s ease-in-out infinite;
+    }
+    .ambient-star.small { animation-duration: 8s; }
+    @keyframes ambient-float {
+        0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.7; }
+        50% { transform: translateY(-10px) rotate(15deg); opacity: 1; }
+    }
 
-.ambient-moon, .ambient-sun {
-    position: absolute;
-    animation: ambient-glow 8s ease-in-out infinite;
-}
-@keyframes ambient-glow {
-    0%, 100% { opacity: 0.7; }
-    50% { opacity: 1; }
-}
+    .ambient-moon, .ambient-sun {
+        position: absolute;
+        animation: ambient-glow 8s ease-in-out infinite;
+    }
+    @keyframes ambient-glow {
+        0%, 100% { opacity: 0.7; }
+        50% { opacity: 1; }
+    }
     </style>
     {{ $styles ?? '' }}
 </head>
 <body>
 
 
-
+//mini animation 
 
 <div class="ambient-field" aria-hidden="true">
     <svg class="ambient-star" style="top:8%; left:15%; animation-delay:0s;" width="14" height="14" viewBox="0 0 14 14">
