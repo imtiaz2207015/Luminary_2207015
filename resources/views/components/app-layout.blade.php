@@ -228,6 +228,7 @@ body { animation: drift 25s ease-in-out infinite alternate; background-size: 200
 <body>
 
 
+{{-- FEATURE: ambient-field START
 //mini animation 
 
 <div class="ambient-field" aria-hidden="true">
@@ -295,6 +296,7 @@ body { animation: drift 25s ease-in-out infinite alternate; background-size: 200
         </defs>
     </svg>
 </div>
+FEATURE: ambient-field END --}}
 
 
 
@@ -381,7 +383,9 @@ body { animation: drift 25s ease-in-out infinite alternate; background-size: 200
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{{-- FEATURE: reflection-quote-script START
 <script src="{{ asset('js/reflection-quote.js') }}"></script>
+FEATURE: reflection-quote-script END --}}
 {{ $scripts ?? '' }}
 </body>
 </html>
