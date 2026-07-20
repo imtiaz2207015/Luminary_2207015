@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
  * QuoteRateLimitMiddleware
  *
  * Limits how many times a single logged-in user can request a new
- * reflection quote in a short window. This mirrors the ZenQuotes API's
+ * reflection quote in a short window. This mirrors the API-ninja.com's API
  * own free-tier limit (5 requests per 30 seconds) so that our app
  * never gets its shared IP throttled by hammering the "Get inspired"
  * button in the capsule/post creation form.

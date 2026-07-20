@@ -284,7 +284,7 @@
                     you choose for each capsule or post. You may delete your account at any time from the
                     Profile tab, which permanently removes your data from our systems.
                 </p>
-                <p style="color:#8b95a8; font-size:0.78rem; margin-top:1rem;">This is placeholder policy text — replace with your actual policy before going live.</p>
+               
             </div>
         </div>
 
