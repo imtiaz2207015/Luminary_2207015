@@ -270,7 +270,7 @@
                 $statusIcon = '🔓';
             }
 
-            // Fill level: 100% = just created, ~15% = near unlock
+           
             $created = $capsule->created_at;
             $unlock  = $capsule->unlock_date;
             $total   = max($unlock->diffInSeconds($created), 1);
@@ -289,7 +289,7 @@
                  data-locked="{{ $capsule->is_locked ? '1' : '0' }}"
                  data-fillpct="{{ $fillPct }}">
 
-                {{-- SVG Wave --}}
+                {{-- SVG Wave for capsule water wave--}}
                 <svg class="capsule-wave" xmlns="http://www.w3.org/2000/svg"
                      viewBox="0 0 1800 158" preserveAspectRatio="none"
                      style="height:{{ $waveHeight }}px;">
