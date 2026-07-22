@@ -105,20 +105,22 @@
             My Friends @if($friends->count() > 0) <span class="badge-gold ms-2">{{ $friends->count() }}</span> @endif
         </h5>
         @forelse($friends as $friendship)
-        <div class="glass-card p-3 d-flex align-items-center gap-3 mb-2">
-            <img src="{{ $friendship->friend->avatar_url }}" style="width:40px; height:40px; border-radius:50%;" alt="">
-            <div style="flex:1;">
-            <a href="{{route('friends.capsules', $friendship->friend->id)}}" 
-   style="color:#f5f0e8; font-weight:600; font-size:0.9rem; text-decoration:none;">
-    {{ $friendship->friend->name }}
-</a>
-
-            </div>
-            <form method="POST" action="{{ route('friends.unfriend', $friendship->friend->id)}}">
-                @csrf @method('DELETE')
-                <button class="btn btn-danger-soft btn-sm">Unfriend</button>
-            </form>
-        </div>
+       <div class="glass-card p-3 d-flex align-items-center gap-3 mb-2">
+    <img src="{{ $friendship->friend->avatar_url }}" style="width:40px; height:40px; border-radius:50%;" alt="">
+    <div style="flex:1;">
+        <a href="{{route('friends.capsules', $friendship->friend->id)}}" 
+           style="color:#f5f0e8; font-weight:600; font-size:0.9rem; text-decoration:none;">
+            {{ $friendship->friend->name }}
+        </a>
+    </div>
+    <a href="{{ route('messages.start', $friendship->friend) }}" class="btn btn-gold btn-sm">
+        Message
+    </a>
+    <form method="POST" action="{{ route('friends.unfriend', $friendship->friend->id)}}">
+        @csrf @method('DELETE')
+        <button class="btn btn-danger-soft btn-sm">Unfriend</button>
+    </form>
+</div>
         @empty
         <div class="glass-card p-4 text-center">
             <p style="color:#8b95a8; font-size:0.85rem; margin:0;">No friends yet. Search above!</p>

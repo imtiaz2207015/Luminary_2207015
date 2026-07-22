@@ -13,6 +13,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\QuoteController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MessageController;
+
 
 // Home
 Route::get('/', function () { return redirect()->route('login'); });
@@ -27,6 +29,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/posts/{post}/comments', [PostController::class, 'storeComment'])->name('posts.comments.store');
     Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
     Route::patch('/posts/{post}/visibility', [PostController::class, 'updateVisibility'])->name('posts.visibility');
+    Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
+Route::get('/messages/{conversation}', [MessageController::class, 'show'])->name('messages.show');
+Route::post('/messages/{conversation}', [MessageController::class, 'store'])->name('messages.store');
+Route::get('/messages/start/{friend}', [MessageController::class, 'startWith'])->name('messages.start');
 
     // Capsules
     Route::get('/capsules', [CapsuleController::class, 'index'])->name('capsules.index');

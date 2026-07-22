@@ -48,4 +48,14 @@ class User extends Authenticatable {
             ? asset('storage/' . $this->avatar)
             : 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=1a1a2e&color=f0a500&size=128';
     }
+
+    public function conversations()
+{
+    return $this->belongsToMany(Conversation::class, 'conversation_participants');
+}
+
+public function messages()
+{
+    return $this->hasMany(Message::class);
+}
 }

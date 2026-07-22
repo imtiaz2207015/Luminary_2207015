@@ -29,7 +29,12 @@
             Member since {{ $friend->created_at->format('M Y') }}
         </div>
     </div>
+    <a href="{{ route('messages.start', $friend) }}" class="btn btn-gold btn-sm">
+        Message
+    </a>
 </div>
+
+
 
 {{-- Capsules --}}
 <h5 style="font-family:'Playfair Display',serif; color:#f5f0e8; margin-bottom:1rem;">
